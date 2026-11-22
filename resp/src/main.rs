@@ -1,10 +1,16 @@
+use std::env::args;
+
 
 pub enum ParseResult {
     Complete(Vec<String>, usize),
     Incomplete,
     Invalid,
 }
-
+// pub enum ParseResponse {
+//     Complete(u8, usize),
+//     Incomplete,
+//     Invalid,
+// }
 pub fn parse(input: &[u8]) -> ParseResult {
     let mut cursor: usize = 0;
 
@@ -90,10 +96,19 @@ pub fn parse(input: &[u8]) -> ParseResult {
         cursor += ucom_len + 2;
 
     }
-    return ParseResult::Complete(args, len);
+    return ParseResult::Complete(args, cursor);
     // ParseResult::Incomplete
 }
 
+pub fn serializer (response: &str) ->Vec<u8> {
+    let mut bytes: Vec<u8> = Vec::new();
+
+    bytes.push(b'+');
+    bytes.extend_from_slice(response.as_bytes());
+    bytes.extend_from_slice(b"\r\n");
+
+    bytes
+}
 fn main() {
     let input = b"*3\r\n$3\r\nSET\r\n$4\r\nname\r\n$5\r\nAlice\r\n";
 
@@ -105,4 +120,7 @@ fn main() {
         ParseResult::Incomplete => println!("Incomplete input"),
         ParseResult::Invalid => println!("Invalid input"),
     }
+    let response = "PONG";
+    print!("Serialised: {:?}",serializer(response));
+
 }
